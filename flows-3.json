@@ -1,0 +1,98 @@
+[
+    {
+        "id": "6bd3a5a387d00743",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "66538cd7d977fe18",
+        "type": "ui-template",
+        "z": "6bd3a5a387d00743",
+        "group": "",
+        "page": "2f9a932f92635c2d",
+        "ui": "",
+        "name": "Đăng kí / Đăng nhập",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": "<style>\n    .center-wrapper {\n        width: 100%;\n        height: 100vh;\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        background: #f5f7fb;\n        font-family: Arial, sans-serif;\n    }\n\n    .auth-card {\n        width: 360px;\n        background: #fff;\n        padding: 28px;\n        border-radius: 16px;\n        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);\n        animation: fadeIn .3s ease;\n    }\n\n    .title {\n        text-align: center;\n        font-size: 26px;\n        font-weight: bold;\n        margin-bottom: 22px;\n    }\n\n    .input-box {\n        margin-bottom: 12px;\n    }\n\n    .input-box input {\n        width: 100%;\n        padding: 12px;\n        font-size: 15px;\n        border: 1px solid #ddd;\n        border-radius: 10px;\n        outline: none;\n    }\n\n    .btn {\n        width: 100%;\n        margin-top: 8px;\n        padding: 12px;\n        border: none;\n        border-radius: 10px;\n        background: #4A90E2;\n        color: white;\n        cursor: pointer;\n        font-size: 16px;\n    }\n\n    .link {\n        text-align: center;\n        margin-top: 14px;\n    }\n\n    .link span {\n        color: #4A90E2;\n        cursor: pointer;\n    }\n</style>\n\n<div class=\"center-wrapper\">\n\n    <!-- LOGIN -->\n    <div id=\"login\" class=\"auth-card\">\n        <div class=\"title\">Welcome Back</div>\n\n        <div class=\"input-box\">\n            <input id=\"login_user\" placeholder=\"Username\">\n        </div>\n\n        <div class=\"input-box\">\n            <input id=\"login_pass\" type=\"password\" placeholder=\"Password\">\n        </div>\n\n        <button class=\"btn\" onclick=\"doLogin()\">Login</button>\n\n        <div class=\"link\">Don't have an account?\n            <span onclick=\"showRegister()\">Register</span>\n        </div>\n    </div>\n\n    <!-- REGISTER -->\n    <div id=\"register\" class=\"auth-card\" style=\"display:none;\">\n        <div class=\"title\">Create Account</div>\n\n        <div class=\"input-box\">\n            <input id=\"reg_user\" placeholder=\"Username\">\n        </div>\n\n        <div class=\"input-box\">\n            <input id=\"reg_pass\" type=\"password\" placeholder=\"Password\">\n        </div>\n\n        <button class=\"btn\" onclick=\"doRegister()\">Register</button>\n\n        <div class=\"link\">Already have an account?\n            <span onclick=\"showLogin()\">Login</span>\n        </div>\n    </div>\n\n</div>\n\n<script>\n    function showRegister() {\n    document.getElementById(\"login\").style.display = \"none\";\n    document.getElementById(\"register\").style.display = \"block\";\n  }\n\n  function showLogin() {\n    document.getElementById(\"register\").style.display = \"none\";\n    document.getElementById(\"login\").style.display = \"block\";\n  }\n\n  function doLogin() {\n    const msg = {\n      type: \"login\",\n      username: document.getElementById(\"login_user\").value,\n      password: document.getElementById(\"login_pass\").value\n    };\n    node.send(msg);\n  }\n\n  function doRegister() {\n    const msg = {\n      type: \"register\",\n      username: document.getElementById(\"reg_user\").value,\n      password: document.getElementById(\"reg_pass\").value\n    };\n    node.send(msg);\n  }\n</script>",
+        "storeOutMessages": true,
+        "passthru": true,
+        "resendOnRefresh": true,
+        "templateScope": "widget:page",
+        "className": "",
+        "x": 520,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2f9a932f92635c2d",
+        "type": "ui-page",
+        "name": "Đăng nhập / Đăng kí",
+        "ui": "b11e759d6c66bd03",
+        "path": "/login",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "default",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 1,
+        "className": "",
+        "visible": true,
+        "disabled": "false"
+    },
+    {
+        "id": "b11e759d6c66bd03",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "5b3bdfa663fbbd15",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.29.0"
+        }
+    }
+]
