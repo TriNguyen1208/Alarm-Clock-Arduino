@@ -85,7 +85,7 @@ void connect() {
 
 void loop() {
   //Connect wifi and mqtt broker
-  connect()
+  connect();
   //***Publish data to MQTT Server***
   int temperature = random(0,100);
   char buffer[50];
