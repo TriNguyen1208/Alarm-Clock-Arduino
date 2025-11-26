@@ -153,36 +153,12 @@
             "24b315841a270826",
             "b1662d4a62ab8053",
             "7ca1fb8d992ba447",
-            "6785d3e17bcf6591",
-            "8370e6ba3250ad63"
+            "6785d3e17bcf6591"
         ],
-        "x": 174,
-        "y": 1399,
-        "w": 652,
+        "x": 394,
+        "y": 939,
+        "w": 432,
         "h": 282
-    },
-    {
-        "id": "63ca5ffb68c96f84",
-        "type": "group",
-        "z": "5361893b0ad914fd",
-        "style": {
-            "stroke": "#999999",
-            "stroke-opacity": "1",
-            "fill": "none",
-            "fill-opacity": "1",
-            "label": true,
-            "label-position": "nw",
-            "color": "#a4a4a4"
-        },
-        "nodes": [
-            "688751c3b83ff57b",
-            "69577fb4a4b3ecb8",
-            "ef3b48b950203b72"
-        ],
-        "x": 434,
-        "y": 419,
-        "w": 232,
-        "h": 242
     },
     {
         "id": "ed56a6716eca6b3d",
@@ -234,6 +210,31 @@
         "y": 1039,
         "w": 212,
         "h": 262
+    },
+    {
+        "id": "4b509742a6864ce0",
+        "type": "group",
+        "z": "5361893b0ad914fd",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "0aa77d2f46e024ea",
+            "688751c3b83ff57b",
+            "69577fb4a4b3ecb8",
+            "ef3b48b950203b72",
+            "9f2b91266736ad94"
+        ],
+        "x": 114,
+        "y": 419,
+        "w": 512,
+        "h": 242
     },
     {
         "id": "930c1b11cb9e2faa",
@@ -382,12 +383,26 @@
         "hidden": false
     },
     {
+        "id": "632eecae8892db4f",
+        "type": "ui_tab",
+        "name": "Tab 4",
+        "icon": "dashboard",
+        "order": 4
+    },
+    {
         "id": "e211304bdf84459f",
         "type": "ui_link",
         "name": "Link 5",
         "icon": "open_in_browser",
         "target": "newtab",
         "order": 5
+    },
+    {
+        "id": "305c496817c0b2fd",
+        "type": "ui_tab",
+        "name": "Tab 6",
+        "icon": "dashboard",
+        "order": 6
     },
     {
         "id": "b11e759d6c66bd03",
@@ -472,7 +487,7 @@
         "path": "/settings",
         "icon": "cogs",
         "layout": "grid",
-        "theme": "default",
+        "theme": "20bdc461d55fdddd",
         "breakpoints": [
             {
                 "name": "Default",
@@ -627,7 +642,7 @@
         "order": 4,
         "showTitle": true,
         "className": "",
-        "visible": true,
+        "visible": "true",
         "disabled": "false",
         "groupType": "default"
     },
@@ -694,6 +709,52 @@
         "visible": "true",
         "disabled": "false",
         "groupType": "default"
+    },
+    {
+        "id": "5f7d3c4fc2ec8209",
+        "type": "tls-config",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "5ffcb8a9c428adc4",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "1d9a7fc0082a411c84fa4a195fc39154.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "5f7d3c4fc2ec8209",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
     },
     {
         "id": "c82f462736d7d6ab",
@@ -1120,7 +1181,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 500,
-        "y": 1520,
+        "y": 1060,
         "wires": [
             []
         ]
@@ -1158,7 +1219,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 510,
-        "y": 1580,
+        "y": 1120,
         "wires": [
             []
         ]
@@ -1196,7 +1257,7 @@
         "pointerupPayload": "",
         "pointerupPayloadType": "str",
         "x": 530,
-        "y": 1640,
+        "y": 1180,
         "wires": [
             []
         ]
@@ -1223,45 +1284,8 @@
         "value": "payloads",
         "valueType": "msg",
         "x": 610,
-        "y": 1440,
+        "y": 980,
         "wires": []
-    },
-    {
-        "id": "8370e6ba3250ad63",
-        "type": "ui-button",
-        "z": "fbc44ea8c3c7f9af",
-        "g": "0473252db7069685",
-        "name": "",
-        "label": "button",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 250,
-        "y": 1540,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "c25bab98aa793583",
@@ -1297,177 +1321,6 @@
             [
                 "c82f462736d7d6ab"
             ]
-        ]
-    },
-    {
-        "id": "688751c3b83ff57b",
-        "type": "ui-gauge",
-        "z": "5361893b0ad914fd",
-        "g": "63ca5ffb68c96f84",
-        "name": "Nhiệt độ",
-        "group": "7bb6ba007f54375b",
-        "order": 1,
-        "value": "payload",
-        "valueType": "msg",
-        "width": "4",
-        "height": "4",
-        "gtype": "gauge-half",
-        "gstyle": "needle",
-        "title": "Nhiệt độ",
-        "alwaysShowTitle": false,
-        "floatingTitlePosition": "top-left",
-        "units": "độ C",
-        "icon": "",
-        "prefix": "",
-        "suffix": "",
-        "segments": [
-            {
-                "from": "0",
-                "color": "#ea5353",
-                "text": "",
-                "textType": "value"
-            },
-            {
-                "from": "30",
-                "color": "#5cd65c",
-                "text": "",
-                "textType": "value"
-            },
-            {
-                "from": "35",
-                "color": "#ffc800",
-                "text": "",
-                "textType": "value"
-            },
-            {
-                "from": "40",
-                "color": "#ea5353",
-                "text": "",
-                "textType": "label"
-            }
-        ],
-        "min": 0,
-        "max": "100",
-        "sizeThickness": 16,
-        "sizeGap": 4,
-        "sizeKeyThickness": 8,
-        "styleRounded": true,
-        "styleGlow": false,
-        "className": "",
-        "x": 520,
-        "y": 460,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "69577fb4a4b3ecb8",
-        "type": "ui-gauge",
-        "z": "5361893b0ad914fd",
-        "g": "63ca5ffb68c96f84",
-        "name": "Độ ẩm",
-        "group": "f374b07cd7cab8d9",
-        "order": 1,
-        "value": "payload",
-        "valueType": "msg",
-        "width": "4",
-        "height": "4",
-        "gtype": "gauge-half",
-        "gstyle": "needle",
-        "title": "gauge",
-        "alwaysShowTitle": false,
-        "floatingTitlePosition": "top-left",
-        "units": "units",
-        "icon": "",
-        "prefix": "",
-        "suffix": "",
-        "segments": [
-            {
-                "from": "0",
-                "color": "#5cd65c",
-                "text": "",
-                "textType": "label"
-            },
-            {
-                "from": "4",
-                "color": "#ffc800",
-                "text": "",
-                "textType": "label"
-            },
-            {
-                "from": "7",
-                "color": "#ea5353",
-                "text": "",
-                "textType": "label"
-            }
-        ],
-        "min": 0,
-        "max": 10,
-        "sizeThickness": 16,
-        "sizeGap": 4,
-        "sizeKeyThickness": 8,
-        "styleRounded": true,
-        "styleGlow": false,
-        "className": "",
-        "x": 510,
-        "y": 540,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "ef3b48b950203b72",
-        "type": "ui-gauge",
-        "z": "5361893b0ad914fd",
-        "g": "63ca5ffb68c96f84",
-        "name": "Ô nhiễm không khí",
-        "group": "64d71bebcf6f8b62",
-        "order": 1,
-        "value": "payload",
-        "valueType": "msg",
-        "width": "4",
-        "height": "4",
-        "gtype": "gauge-half",
-        "gstyle": "needle",
-        "title": "gauge",
-        "alwaysShowTitle": false,
-        "floatingTitlePosition": "top-left",
-        "units": "units",
-        "icon": "",
-        "prefix": "",
-        "suffix": "",
-        "segments": [
-            {
-                "from": "0",
-                "color": "#5cd65c",
-                "text": "",
-                "textType": "label"
-            },
-            {
-                "from": "4",
-                "color": "#ffc800",
-                "text": "",
-                "textType": "label"
-            },
-            {
-                "from": "7",
-                "color": "#ea5353",
-                "text": "",
-                "textType": "label"
-            }
-        ],
-        "min": 0,
-        "max": 10,
-        "sizeThickness": 16,
-        "sizeGap": 4,
-        "sizeKeyThickness": 8,
-        "styleRounded": true,
-        "styleGlow": false,
-        "className": "",
-        "x": 550,
-        "y": 620,
-        "wires": [
-            []
         ]
     },
     {
@@ -1839,6 +1692,218 @@
         ]
     },
     {
+        "id": "0aa77d2f46e024ea",
+        "type": "mqtt in",
+        "z": "5361893b0ad914fd",
+        "g": "4b509742a6864ce0",
+        "name": "",
+        "topic": "/air_quality",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "5ffcb8a9c428adc4",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 600,
+        "wires": [
+            [
+                "9f2b91266736ad94",
+                "ef3b48b950203b72"
+            ]
+        ]
+    },
+    {
+        "id": "688751c3b83ff57b",
+        "type": "ui-gauge",
+        "z": "5361893b0ad914fd",
+        "g": "4b509742a6864ce0",
+        "name": "Nhiệt độ",
+        "group": "7bb6ba007f54375b",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "Nhiệt độ",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "độ C",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "30",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "35",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "40",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 480,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "69577fb4a4b3ecb8",
+        "type": "ui-gauge",
+        "z": "5361893b0ad914fd",
+        "g": "4b509742a6864ce0",
+        "name": "Độ ẩm",
+        "group": "f374b07cd7cab8d9",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "gauge",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "units",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "4",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "label"
+            },
+            {
+                "from": "7",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "label"
+            }
+        ],
+        "min": 0,
+        "max": 10,
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 470,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef3b48b950203b72",
+        "type": "ui-gauge",
+        "z": "5361893b0ad914fd",
+        "g": "4b509742a6864ce0",
+        "name": "Ô nhiễm không khí",
+        "group": "64d71bebcf6f8b62",
+        "order": 1,
+        "value": "payload",
+        "valueType": "msg",
+        "width": "4",
+        "height": "4",
+        "gtype": "gauge-half",
+        "gstyle": "needle",
+        "title": "gauge",
+        "alwaysShowTitle": false,
+        "floatingTitlePosition": "top-left",
+        "units": "units",
+        "icon": "",
+        "prefix": "",
+        "suffix": "",
+        "segments": [
+            {
+                "from": "0",
+                "color": "#5cd65c",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "50",
+                "color": "#ffc800",
+                "text": "",
+                "textType": "value"
+            },
+            {
+                "from": "70",
+                "color": "#ea5353",
+                "text": "",
+                "textType": "value"
+            }
+        ],
+        "min": 0,
+        "max": "100",
+        "sizeThickness": 16,
+        "sizeGap": 4,
+        "sizeKeyThickness": 8,
+        "styleRounded": true,
+        "styleGlow": false,
+        "className": "",
+        "x": 510,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f2b91266736ad94",
+        "type": "debug",
+        "z": "5361893b0ad914fd",
+        "g": "4b509742a6864ce0",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 480,
+        "wires": []
+    },
+    {
         "id": "66538cd7d977fe18",
         "type": "ui-template",
         "z": "6bd3a5a387d00743",
@@ -1863,7 +1928,7 @@
         ]
     },
     {
-        "id": "f52cd9ece31c263b",
+        "id": "053f40ada9d423d2",
         "type": "global-config",
         "env": [],
         "modules": {
