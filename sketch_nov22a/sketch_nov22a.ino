@@ -7,6 +7,7 @@
 #include <MQ135.h>
 #include <DHT.h>
 #include <Wire.h>
+#include <time.h>
 #include <LiquidCrystal_I2C.h>
 
 #include "song.h"
@@ -25,6 +26,7 @@ struct RTC {
   int day_index;
   int hour;
   int minute;
+  int second;
 } rtcValue;
 
 
@@ -32,6 +34,8 @@ struct RTC {
 const char* ALARM_SETTINGS_TOPIC = "/alarm";
 const char* ALARM_ACTIVATION_TOPIC = "/alarm/active";
 const char* AIR_QUALITY_TOPIC = "/air-quality";
+const char* TEMPERATURE_TOPIC = "/temperature";
+const char* HUMIDITY_TOPIC = "/humidity";
 
 
 // ----- RTC -----
@@ -41,27 +45,60 @@ const long INTERVAL = 60000;
 
 
 // ----- Time Handling -----
-unsigned long lastTime = 0;
+unsigned long lastTime = 0.0;
 
 
 // ----- Alarms -----
 bool isAlarmActive = true;
 bool isAlarmTriggered = false;
 bool NUM_ITERATIONS = 3;
+
+
+// ----- LCD -----
+bool lcdMode = true;
+
+byte TEMP_ICON[8] = {
+  0b00100,
+  0b01010,
+  0b01010,
+  0b01110,
+  0b01110,
+  0b11111,
+  0b11111,
+  0b01110
+};
+
+byte HUMID_ICON[8] = {
+  0b00100,
+  0b00100,
+  0b01010,
+  0b01010,
+  0b10001,
+  0b10001,
+  0b10001,
+  0b01110
+};
+
+
+// ----- BUTTON -----
+unsigned long pressedTime = 0.0;
+int lastState = LOW;
 // ======================================
 
 
 
 // ========== Configurations ==========
 // ----- PINOUT -----
+#define LED_PIN 25
 #define DHT11_PIN 26
-#define MQ135_PIN 27
+#define BUTTON_PIN 27
 #define BUZZER_PIN 32
-#define BUTTON_PIN 33
+#define MQ135_PIN 33
+#define POTEN_PIN 35
 
 // ----- WIFI -----
-const char* SSID = "KP";
-const char* PASSWORD = "tumotdentam";
+const char* SSID = "huynhlong";
+const char* PASSWORD = "142206long";
 
 WiFiClientSecure WIFI_CLIENT;
 PubSubClient mqttClient(WIFI_CLIENT);
@@ -126,6 +163,34 @@ void triggerBuzzer() {
   for (int i = 0; i < NUM_ITERATIONS; i++) {
     songPlayer.playSong(alarmSettings.ringtone);
   }
+}
+
+
+void publishValue(const char* topic, float value) {
+  char buffer[50];
+  sprintf(buffer, "%.1f", value);
+  mqttClient.publish(topic, buffer);
+}
+
+
+void publishAirQuality() {
+  float ppmCo2 = mq135Sensor.getPPM();
+  Serial.println(ppmCo2);
+  publishValue(AIR_QUALITY_TOPIC, ppmCo2);
+}
+
+
+float publishTemperature() {
+  float temp = dhtSensor.readTemperature();
+  publishValue(TEMPERATURE_TOPIC, temp);
+  return temp;
+}
+
+
+float publishHumidity() {
+  float humid = dhtSensor.readHumidity();
+  publishValue(HUMIDITY_TOPIC, humid);
+  return humid;
 }
 // ======================================
 
@@ -197,52 +262,72 @@ void callback(char* topic, byte* message, unsigned int length) {
     parseAlarmSettings(msg);
   }
 }
-
-
-void publishValue(const char* topic, float value) {
-  char buffer[50];
-  sprintf(buffer, "%f", value);
-  mqttClient.publish(topic, buffer);
-}
-
-
-void publishAirQuality() {
-  float ppmCo2 = mq135Sensor.getPPM();
-  publishValue(AIR_QUALITY_TOPIC, ppmCo2);
-}
-
 // ==========================================
 
 
 // ========== MAIN FUNCTIONS ==========
 void setup() {
   Serial.begin(9600);
-  // Serial.print("Connecting to WiFi");
+  Serial.print("Connecting to WiFi");
 
   pinMode(BUTTON_PIN, INPUT);
   pinMode(BUZZER_PIN, OUTPUT);
-
+  pinMode(POTEN_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
   wifiConnect();
 
+  analogReadResolution(10);
+
   timeClient.begin();
-  timeClient.update();
+  timeClient.forceUpdate();
 
   mqttClient.setServer(MQTT_SERVER, PORT);
   mqttClient.setCallback(callback);
   mqttClient.setKeepAlive(90);
   WIFI_CLIENT.setInsecure();
+
+  dhtSensor.begin();
+  lcd.init();
+  lcd.backlight();
+  lcd.createChar(0, TEMP_ICON);
+  lcd.createChar(1, HUMID_ICON);
 }
+
 
 void loop() {
   //Connect wifi and mqtt broker
   connect();
 
+  int potenValue = analogRead(POTEN_PIN);
+  int ledValue = (int)(potenValue / 4);
+  analogWrite(LED_PIN, ledValue);
+
+  int stateButton = digitalRead(BUTTON_PIN);
+  if (lastState == LOW && stateButton == HIGH) 
+  {
+    pressedTime = millis();
+  }
+
+  if (lastState == HIGH && stateButton == LOW)
+  {
+    if (millis() - pressedTime >= 2000)
+    {
+      lcd.clear();
+      lcdMode = !lcdMode;
+    }
+  } 
+
+  lastState = stateButton;
+
+
   if (millis() - lastTime >= 1000) {
     lastTime = millis();
 
 
-    // ----- Publish MQ135 -----
+    // ----- Publish Sensors -----
     publishAirQuality();
+    float humid = publishHumidity();
+    float temp = publishTemperature();
     // -------------------------
 
 
@@ -251,22 +336,54 @@ void loop() {
     rtcValue.day_index = timeClient.getDay();
     rtcValue.hour = timeClient.getHours();
     rtcValue.minute = timeClient.getMinutes();
+    rtcValue.second = timeClient.getSeconds();
     // ----------------------
 
 
-    // ========== Debug =========
-    // Serial.print("Day Index: ");
-    // Serial.println(rtcValue.day_index);
-    // Serial.print("Hour: ");
-    // Serial.println(rtcValue.hour);
-    // Serial.print("Minute: ");
-    // Serial.println(rtcValue.minute);
+    if (lcdMode) {
+      // Hiển thị giờ
+      lcd.setCursor(0, 0);
+      lcd.print("Time: ");
+      if(rtcValue.hour < 10) lcd.print("0"); lcd.print(rtcValue.hour);
+      lcd.print(":");
+      if(rtcValue.minute < 10) lcd.print("0"); lcd.print(rtcValue.minute);
+      lcd.print(":");
+      if(rtcValue.second < 10) lcd.print("0"); lcd.print(rtcValue.second);
+    
+      time_t epochTime = timeClient.getEpochTime();  
+      struct tm *ptm = localtime(&epochTime);     
 
-    // Serial.print("Alarm Hour: ");
-    // Serial.println(alarmSettings.hour);
-    // Serial.print("Alarm Minute: ");
-    // Serial.println(alarmSettings.minute);
-    // ==========================
+      int day = ptm->tm_mday;
+      int month = ptm->tm_mon + 1;
+      int year = ptm->tm_year + 1900;
+
+      // Hiển thị ngày
+      lcd.setCursor(0, 1);
+      lcd.print("Date: ");
+      if(day < 10) lcd.print("0");
+      lcd.print(day);
+      lcd.print("/");
+      if(month < 10) lcd.print("0");
+      lcd.print(month);
+      lcd.print("/");
+      lcd.print(year);
+
+    } else {
+      lcd.setCursor(0,0);
+      lcd.print("Temp: ");
+      lcd.write((byte)0);
+      lcd.print(" ");
+      lcd.print(temp, 1);
+      lcd.print((char)223);
+      lcd.print("C");
+
+      lcd.setCursor(0,1);
+      lcd.print("Humidity: ");
+      lcd.write((byte)1);
+      lcd.print(" ");
+      lcd.print(humid, 0);
+      lcd.print("%");
+    }
 
 
     // ----- Alarm Logic -----
@@ -288,6 +405,5 @@ void loop() {
       isAlarmTriggered = false;
     }
     // -----------------------
-
   }
 }
