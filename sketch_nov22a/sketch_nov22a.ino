@@ -29,6 +29,11 @@ struct RTC {
   int second;
 } rtcValue;
 
+struct Measurements {
+  float ppm;
+  float temperature;
+  float humidity;
+} measurementObj;
 
 // ----- Topics -----
 const char* ALARM_SETTINGS_TOPIC = "/alarm";
@@ -45,7 +50,7 @@ const long INTERVAL = 60000;
 
 
 // ----- Time Handling -----
-unsigned long lastTime = 0.0;
+unsigned long lastTime = 0;
 
 
 // ----- Alarms -----
@@ -97,8 +102,8 @@ int lastState = LOW;
 #define POTEN_PIN 35
 
 // ----- WIFI -----
-const char* SSID = "huynhlong";
-const char* PASSWORD = "142206long";
+const char* SSID = "your_SSID";
+const char* PASSWORD = "your_password";
 
 WiFiClientSecure WIFI_CLIENT;
 PubSubClient mqttClient(WIFI_CLIENT);
@@ -112,10 +117,10 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 // ----- Broker Server -----
-const char* MQTT_SERVER = "1d9a7fc0082a411c84fa4a195fc39154.s1.eu.hivemq.cloud"; 
+const char* MQTT_SERVER = "your_broker"; 
 int PORT = 8883;
-const char* MQTT_USER = "phanhuynhminhkhoi"; 
-const char* MQTT_PASSWORD = "KhoiHCMUS123";
+const char* MQTT_USER = "your_mqtt_username"; 
+const char* MQTT_PASSWORD = "your_mqtt_password";
 
 
 // ----- Song Player -----
@@ -128,7 +133,6 @@ SongPlayer songPlayer = SongPlayer(BUZZER_PIN, BUTTON_PIN);
 void parseAlarmSettings(String jsonString) {
   StaticJsonDocument<512> doc;
   
-  // Deserialize JSON
   DeserializationError error = deserializeJson(doc, jsonString);
   
   if (error) {
@@ -137,7 +141,6 @@ void parseAlarmSettings(String jsonString) {
     return;
   }
   
-  // Extract data from JSON
   String timeString = doc["time"].as<String>();
   int colonIndex = timeString.indexOf(':');
 
@@ -146,11 +149,9 @@ void parseAlarmSettings(String jsonString) {
 
   alarmSettings.ringtone = doc["ringtone"].as<int>();
   
-  // Extract days array
   JsonArray daysArray = doc["days"];
   alarmSettings.dayCount = daysArray.size();
   
-  // Copy days to struct array
   for (int i = 0; i < alarmSettings.dayCount && i < 7; i++) {
     alarmSettings.days[i] = daysArray[i];
   }
@@ -175,22 +176,69 @@ void publishValue(const char* topic, float value) {
 
 void publishAirQuality() {
   float ppmCo2 = mq135Sensor.getPPM();
-  Serial.println(ppmCo2);
+  measurementObj.ppm = ppmCo2;
   publishValue(AIR_QUALITY_TOPIC, ppmCo2);
 }
 
 
-float publishTemperature() {
+void publishTemperature() {
   float temp = dhtSensor.readTemperature();
+  measurementObj.temperature = temp;
   publishValue(TEMPERATURE_TOPIC, temp);
-  return temp;
 }
 
 
-float publishHumidity() {
+void publishHumidity() {
   float humid = dhtSensor.readHumidity();
+  measurementObj.humidity = humid;
   publishValue(HUMIDITY_TOPIC, humid);
-  return humid;
+}
+
+
+void displayLcd(bool lcdMode) {
+  if (lcdMode) {
+    lcd.setCursor(0, 0);
+    lcd.print("Time: ");
+    if(rtcValue.hour < 10) lcd.print("0"); lcd.print(rtcValue.hour);
+    lcd.print(":");
+    if(rtcValue.minute < 10) lcd.print("0"); lcd.print(rtcValue.minute);
+    lcd.print(":");
+    if(rtcValue.second < 10) lcd.print("0"); lcd.print(rtcValue.second);
+  
+    time_t epochTime = timeClient.getEpochTime();  
+    struct tm *ptm = localtime(&epochTime);     
+
+    int day = ptm->tm_mday;
+    int month = ptm->tm_mon + 1;
+    int year = ptm->tm_year + 1900;
+
+    // Hiển thị ngày
+    lcd.setCursor(0, 1);
+    lcd.print("Date: ");
+    if(day < 10) lcd.print("0");
+    lcd.print(day);
+    lcd.print("/");
+    if(month < 10) lcd.print("0");
+    lcd.print(month);
+    lcd.print("/");
+    lcd.print(year);
+
+  } else {
+    lcd.setCursor(0,0);
+    lcd.print("Temp: ");
+    lcd.write((byte) 0);
+    lcd.print(" ");
+    lcd.print(measurementObj.temperature, 1);
+    lcd.print((char)223);
+    lcd.print("C");
+
+    lcd.setCursor(0,1);
+    lcd.print("Humidity: ");
+    lcd.write((byte) 1);
+    lcd.print(" ");
+    lcd.print(measurementObj.humidity, 0);
+    lcd.print("%");
+  }
 }
 // ======================================
 
@@ -198,6 +246,7 @@ float publishHumidity() {
 
 // ========== CONNECTION FUNCTIONS ==========
 void wifiConnect() {
+  WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
   Serial.print("Connecting Wifi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -295,39 +344,18 @@ void setup() {
 
 
 void loop() {
-  //Connect wifi and mqtt broker
+  // ----- Connect Wifi and MQTT -----
   connect();
-
-  int potenValue = analogRead(POTEN_PIN);
-  int ledValue = (int)(potenValue / 4);
-  analogWrite(LED_PIN, ledValue);
-
-  int stateButton = digitalRead(BUTTON_PIN);
-  if (lastState == LOW && stateButton == HIGH) 
-  {
-    pressedTime = millis();
-  }
-
-  if (lastState == HIGH && stateButton == LOW)
-  {
-    if (millis() - pressedTime >= 2000)
-    {
-      lcd.clear();
-      lcdMode = !lcdMode;
-    }
-  } 
-
-  lastState = stateButton;
-
+  // ---------------------------------
 
   if (millis() - lastTime >= 1000) {
-    lastTime = millis();
 
+    lastTime = millis();
 
     // ----- Publish Sensors -----
     publishAirQuality();
-    float humid = publishHumidity();
-    float temp = publishTemperature();
+    publishHumidity();
+    publishTemperature();
     // -------------------------
 
 
@@ -340,50 +368,9 @@ void loop() {
     // ----------------------
 
 
-    if (lcdMode) {
-      // Hiển thị giờ
-      lcd.setCursor(0, 0);
-      lcd.print("Time: ");
-      if(rtcValue.hour < 10) lcd.print("0"); lcd.print(rtcValue.hour);
-      lcd.print(":");
-      if(rtcValue.minute < 10) lcd.print("0"); lcd.print(rtcValue.minute);
-      lcd.print(":");
-      if(rtcValue.second < 10) lcd.print("0"); lcd.print(rtcValue.second);
-    
-      time_t epochTime = timeClient.getEpochTime();  
-      struct tm *ptm = localtime(&epochTime);     
-
-      int day = ptm->tm_mday;
-      int month = ptm->tm_mon + 1;
-      int year = ptm->tm_year + 1900;
-
-      // Hiển thị ngày
-      lcd.setCursor(0, 1);
-      lcd.print("Date: ");
-      if(day < 10) lcd.print("0");
-      lcd.print(day);
-      lcd.print("/");
-      if(month < 10) lcd.print("0");
-      lcd.print(month);
-      lcd.print("/");
-      lcd.print(year);
-
-    } else {
-      lcd.setCursor(0,0);
-      lcd.print("Temp: ");
-      lcd.write((byte)0);
-      lcd.print(" ");
-      lcd.print(temp, 1);
-      lcd.print((char)223);
-      lcd.print("C");
-
-      lcd.setCursor(0,1);
-      lcd.print("Humidity: ");
-      lcd.write((byte)1);
-      lcd.print(" ");
-      lcd.print(humid, 0);
-      lcd.print("%");
-    }
+    // ----- LCD Display -----
+    displayLcd(lcdMode);
+    // -----------------------
 
 
     // ----- Alarm Logic -----
@@ -395,7 +382,6 @@ void loop() {
       }
     }
 
-    // Trigger buzzer if day & time match
     if (isDayMatch && rtcValue.hour == alarmSettings.hour && rtcValue.minute == alarmSettings.minute && isAlarmActive == true) {
       if (isAlarmTriggered == false) {
         triggerBuzzer();
@@ -406,4 +392,29 @@ void loop() {
     }
     // -----------------------
   }
+
+
+  // ----- Potentiometer Logic -----
+  int potenValue = analogRead(POTEN_PIN);
+  int ledValue = map(potenValue, 0, 1023, 0, 255);
+  analogWrite(LED_PIN, ledValue);
+  // -------------------------------
+
+
+  // ----- Button Logic -----
+  int stateButton = digitalRead(BUTTON_PIN);
+  if (lastState == LOW && stateButton == HIGH) {
+    pressedTime = millis();
+  }
+
+  if (lastState == HIGH && stateButton == LOW) {
+    if (millis() - pressedTime >= 1500) {
+      lcd.clear();
+      lcdMode = !lcdMode;
+    }
+  } 
+  // ------------------------
+  
+
+  lastState = stateButton;
 }
